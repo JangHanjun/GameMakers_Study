@@ -4,13 +4,21 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour{
     Rigidbody2D rigid;
-
+    SpriteRenderer spriteRenderer;
+    Animator anim;
     public float maxSpeed;
     public float jumpPower;
     public int jumpCount = 0;
     public int maxJumpCount = 2;
+    // 방향을 가져오기 위한 변수
+    Vector3 dirVec;
+    // 레이로 스캔하는 물체 받아오는 변수
+    GameObject scanObject;
+
     void Awake() {
         rigid = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
     }
 
     void Update(){
@@ -19,6 +27,24 @@ public class PlayerMove : MonoBehaviour{
             rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.2f, rigid.velocity.y);
         }
 
+        // Flip
+        if (Input.GetButton("Horizontal"))
+            spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == 1;
+        
+        // 걷는 애니메이션
+        if (Mathf.Abs(rigid.velocity.x) < 0.2f || jumpCount > 0) //속도가 0이라면 = 단위벡터가 0
+            anim.SetBool("isWalk", false);
+        else
+            anim.SetBool("isWalk", true);
+
+        //바라보는 방향
+        float h = Input.GetAxisRaw("Horizontal");
+
+        if(h == -1)
+            dirVec = Vector3.left;
+        else if(h == 1)
+            dirVec = Vector3.right;
+        
         // 점프
         if(Input.GetKeyDown(KeyCode.Space) && jumpCount < maxJumpCount){
             rigid.velocity = Vector2.up * jumpPower;
@@ -45,6 +71,20 @@ public class PlayerMove : MonoBehaviour{
                 Debug.Log("땅");
                 jumpCount = 0;
             }
+        }
+
+        // 조사를 하기 위한 Ray
+        // 씬 상에서 빨간색 선을 쏴서 레이에 닿으면 상호작용 가능하게 개조하면 됨
+        Debug.DrawRay(rigid.position, dirVec * 1.5f, new Color(1, 0, 0));
+        RaycastHit2D rayHit2 = Physics2D.Raycast(rigid.position, dirVec, 1.5f, LayerMask.GetMask("Object"));
+
+        if(rayHit2.collider != null)
+        {
+            scanObject = rayHit2.collider.gameObject;
+        }
+        else
+        {
+            scanObject = null;
         }
         
     }
