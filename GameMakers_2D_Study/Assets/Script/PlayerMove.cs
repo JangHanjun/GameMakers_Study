@@ -8,7 +8,7 @@ public class PlayerMove : MonoBehaviour{
     Animator anim;
     public float maxSpeed;
     public float jumpPower;
-    public int jumpCount = 0;
+    int jumpCount = 0;
     public int maxJumpCount = 2;
     // 방향을 가져오기 위한 변수
     Vector3 dirVec;
@@ -23,9 +23,8 @@ public class PlayerMove : MonoBehaviour{
 
     void Update(){
         // 버튼에서 손을 떼면 움직임 멈춤
-        if(Input.GetButtonUp("Horizontal")){
+        if(Input.GetButtonUp("Horizontal"))
             rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.2f, rigid.velocity.y);
-        }
 
         // Flip
         if (Input.GetButton("Horizontal"))
@@ -78,12 +77,10 @@ public class PlayerMove : MonoBehaviour{
         Debug.DrawRay(rigid.position, dirVec * 1.5f, new Color(1, 0, 0));
         RaycastHit2D rayHit2 = Physics2D.Raycast(rigid.position, dirVec, 1.5f, LayerMask.GetMask("Object"));
 
-        if(rayHit2.collider != null)
-        {
+        if(rayHit2.collider != null){
             scanObject = rayHit2.collider.gameObject;
         }
-        else
-        {
+        else{
             scanObject = null;
         }
         
