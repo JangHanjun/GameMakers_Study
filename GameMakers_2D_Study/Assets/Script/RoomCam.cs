@@ -12,11 +12,15 @@ public class RoomCam : MonoBehaviour
             Map.SetActive(true);
         }
     }
-
     private void OnTriggerExit2D(Collider2D other) {
         if(other.CompareTag("Player") && !other.isTrigger){
-            vituralCam.SetActive(false);
-            Map.SetActive(false);
+            StartCoroutine(SetTF());
         }
+    }
+
+    IEnumerator SetTF(){
+        yield return new WaitForSeconds(1f);
+        vituralCam.SetActive(false);
+        Map.SetActive(false);
     }
 }
