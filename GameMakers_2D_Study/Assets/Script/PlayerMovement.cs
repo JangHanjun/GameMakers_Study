@@ -11,14 +11,18 @@ public class PlayerMovement : MonoBehaviour{
     public float dashSpeed = 20;
     public float wallSlideSpeed = 2;
     public float wallJumpForce = 10;
+    public float wallClimbSpeed = 7;
+    public float playerStamina = 100;
+    //public float coyoteTime = 0.15f;
 
-    public bool isGrabWall;
-    public bool isWallJump;
-    public bool isWallSlide;
-    public bool canMove = true;
-    public bool dashing;
-    public bool onGround;
-    public bool dashed;
+    // 플레이어 상태 변경을 위한 bool
+    public bool onGround;       // 지금 땅 위에 있는가
+    public bool isGrabWall;     // 지금 벽을 잡고 있는가
+    public bool isWallJump;     // 벽점프를 했는가
+    public bool isWallSlide;    // coll.onWall || !coll.onGround 일때 트루
+    public bool canMove = true; // 플레이어 통제권
+    public bool dashing;        // 지금 대쉬하고 있는가
+    public bool dashed;         // 대쉬한 직후
     void Start(){
         coll = GetComponent<Collisions>();
         rigid = GetComponent<Rigidbody2D>();
@@ -34,6 +38,13 @@ public class PlayerMovement : MonoBehaviour{
 
         Walk(dir);
 
+        isGrabWall = coll.onWall && Input.GetKey(KeyCode.LeftShift);
+        
+        if(coll.onGround)
+            PlayerOnGround();
+        //else
+            //coyoteTime -= Time.delatTime;
+        //벽에서 미끄러지는건 방향키를 벽으로 해야 할 수 있다
         if(coll.onWall && !coll.onGround){
             if (x != 0 && !isGrabWall){
                 isWallSlide = true;
@@ -41,19 +52,25 @@ public class PlayerMovement : MonoBehaviour{
             }
         }
 
-        isGrabWall = coll.onWall && Input.GetKey(KeyCode.LeftShift);
-        if(isGrabWall)
-            rigid.velocity = new Vector2(rigid.velocity.x, y * speed);
+
+        // 벽을 잡고 있다면 기어올라갈 수 있게, 스테미너도 줄어들게
+        if(isGrabWall && playerStamina > 0){
+            rigid.velocity = new Vector2(rigid.velocity.x, y * wallClimbSpeed);
+            playerStamina -= Time.deltaTime * 10f;
+        }
 
         if(Input.GetButtonDown("Jump")){
-            if(coll.onGround)
+            // 그냥 땅 위에 있다면 일반 점프
+            if(coll.onGround) // || coyoteTime > 0 추가
                 Jump(Vector2.up, false);
+            // 벽과 붙어있다면 벽점프로 이동
             if(coll.onWall && ! coll.onGround)
                 WallJump();
         }
 
         // Dash
         if(Input.GetButtonDown("Fire1") && !dashed){
+            // dashed는 땅에 닿아야 true가 된다. 대쉬 후 false
             if(xRaw != 0 || yRaw != 0)
                 Dash(xRaw, yRaw);
         }
@@ -76,6 +93,7 @@ public class PlayerMovement : MonoBehaviour{
             rigid.gravityScale = 3;
         }
 
+        // 잡고 있지 않으면 미끄러지게 한다
         if(coll.onWall && !coll.onGround){
             if (x != 0 && !isGrabWall){
                 isWallSlide = true;
@@ -86,9 +104,8 @@ public class PlayerMovement : MonoBehaviour{
         if (!coll.onWall || coll.onGround)
             isWallSlide = false;
 
-        if(coll.onGround)
-            PlayerOnGround();
 
+        // todo : 아래 코드는 뭘까? 조이스틱용?
         if (coll.onWall && Input.GetButton("Fire3") && canMove){
             isGrabWall = true;
             isWallSlide = false;
@@ -105,10 +122,13 @@ public class PlayerMovement : MonoBehaviour{
     void PlayerOnGround(){
         dashed = false;
         dashing = false;
+        playerStamina = 100;
+        //coyoteTime = 0.15;
     }
 
-    // fin
+    // 걷는 로직
     private void Walk(Vector2 dir){
+        // 제어권이 없거나 벽타기중이라면 못움직이기ㅔ
         if(!canMove)
             return;
         if(isGrabWall)
@@ -118,10 +138,9 @@ public class PlayerMovement : MonoBehaviour{
             rigid.velocity = new Vector2(dir.x * speed, rigid.velocity.y);
         else
             rigid.velocity = Vector2.Lerp(rigid.velocity, (new Vector2(dir.x * speed, rigid.velocity.y)), wallJumpForce * Time.deltaTime);
-
     }
 
-    // fin
+    // 점프 로직
     private void Jump(Vector2 dir, bool isWall){
         rigid.velocity = new Vector2(rigid.velocity.x, 0);
         rigid.velocity += dir * jumpForce;
@@ -181,6 +200,7 @@ public class PlayerMovement : MonoBehaviour{
             dashed = false;
     }
 
+    // 통제권 제외 후 time시간 후에 돌려줌
     IEnumerator CantMove(float time){
         canMove = false;
         yield return new WaitForSeconds(time);
