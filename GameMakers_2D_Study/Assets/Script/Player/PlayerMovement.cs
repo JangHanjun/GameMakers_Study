@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour{
     Collisions coll;
     Rigidbody2D rigid;
+    [Header("Player Stat")]
     // 플레이어 능력치
     public float speed = 10;
     public float jumpForce = 7;
@@ -14,7 +15,7 @@ public class PlayerMovement : MonoBehaviour{
     public float wallClimbSpeed = 7;
     public float playerStamina = 100;
     //public float coyoteTime = 0.15f;
-
+    [Header("Player State")]
     // 플레이어 상태 변경을 위한 bool
     public bool onGround;       // 지금 땅 위에 있는가
     public bool isGrabWall;     // 지금 벽을 잡고 있는가
