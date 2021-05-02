@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 public class PlayerMovement : MonoBehaviour{
     Collisions coll;
     Rigidbody2D rigid;
@@ -18,6 +18,7 @@ public class PlayerMovement : MonoBehaviour{
     [Header("Player State")]
     // 플레이어 상태 변경을 위한 bool
     public bool onGround;       // 지금 땅 위에 있는가
+    public bool touchGround;
     public bool isGrabWall;     // 지금 벽을 잡고 있는가
     public bool isWallJump;     // 벽점프를 했는가
     public bool isWallSlide;    // coll.onWall || !coll.onGround 일때 트루
@@ -41,8 +42,13 @@ public class PlayerMovement : MonoBehaviour{
 
         isGrabWall = coll.onWall && Input.GetKey(KeyCode.LeftShift) && playerStamina > 0;
         
-        if(coll.onGround)
+        if(coll.onGround && !touchGround){
             PlayerOnGround();
+            touchGround = true;
+        }
+        if(!coll.onGround && touchGround){
+            touchGround = false;
+        }
         //else
             //coyoteTime -= Time.delatTime;
         //벽에서 미끄러지는건 방향키를 벽으로 해야 할 수 있다
@@ -72,8 +78,9 @@ public class PlayerMovement : MonoBehaviour{
         // Dash
         if(Input.GetButtonDown("Fire1") && !dashed){
             // dashed는 땅에 닿아야 true가 된다. 대쉬 후 false
-            if(xRaw != 0 || yRaw != 0)
+            if(xRaw != 0 || yRaw != 0){
                 Dash(xRaw, yRaw);
+            }  
         }
 
         // 아래부터는 플레이어 위치에 따른 bool 변수 제어
@@ -176,7 +183,7 @@ public class PlayerMovement : MonoBehaviour{
 
         rigid.velocity = Vector2.zero;
         Vector2 direction = new Vector2(x,y);
-        rigid.velocity = direction.normalized * dashSpeed;
+        rigid.velocity += direction.normalized * dashSpeed;
 
         StartCoroutine(AfterDash());
     }
@@ -196,6 +203,7 @@ public class PlayerMovement : MonoBehaviour{
         dashing = false;
     }
     IEnumerator GroundDash(){
+        Debug.Log("땅 대쉬");
         yield return new WaitForSeconds(.15f);
         if(coll.onGround)
             dashed = false;
