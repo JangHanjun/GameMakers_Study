@@ -5,6 +5,7 @@ using DG.Tweening;
 public class PlayerMovement : MonoBehaviour{
     Collisions coll;
     Rigidbody2D rigid;
+    PlayerAnimation anim;
     [Header("Player Stat")]
     // 플레이어 능력치
     public float speed = 10;
@@ -25,9 +26,12 @@ public class PlayerMovement : MonoBehaviour{
     public bool canMove = true; // 플레이어 통제권
     public bool dashing;        // 지금 대쉬하고 있는가
     public bool dashed;         // 대쉬한 직후
+    public int direction = 1;
+
     void Start(){
         coll = GetComponent<Collisions>();
         rigid = GetComponent<Rigidbody2D>();
+        anim = GetComponent<PlayerAnimation>();
     }
 
     void Update(){
@@ -39,6 +43,7 @@ public class PlayerMovement : MonoBehaviour{
         Vector2 dir = new Vector2(x,y);
 
         Walk(dir);
+        anim.HorizontalMovement(x, y, rigid.velocity.y);
 
         isGrabWall = coll.onWall && Input.GetKey(KeyCode.LeftShift) && playerStamina > 0;
         
@@ -67,6 +72,8 @@ public class PlayerMovement : MonoBehaviour{
         }
 
         if(Input.GetButtonDown("Jump")){
+            // 점프 애니메이션 넣는 부분
+
             // 그냥 땅 위에 있다면 일반 점프
             if(coll.onGround) // || coyoteTime > 0 추가
                 Jump(Vector2.up, false);
@@ -123,6 +130,15 @@ public class PlayerMovement : MonoBehaviour{
             isGrabWall = false;
             isWallSlide = false;
         }
+
+        if(x > 0){
+            direction = 1;
+            anim.Flip(direction);
+        }
+        if(x < 0){
+            direction = -1;
+            anim.Flip(direction);
+        }
             
     }
 
@@ -132,6 +148,7 @@ public class PlayerMovement : MonoBehaviour{
         dashing = false;
         playerStamina = 100;
         //coyoteTime = 0.15;
+        direction = anim.spriteRenderer.flipX ? -1 : 1;
     }
 
     // 걷는 로직
@@ -156,6 +173,11 @@ public class PlayerMovement : MonoBehaviour{
 
     private void WallJump(){
 
+        if ((direction == 1 && coll.onRightWall) || direction == -1 && !coll.onRightWall){
+            direction *= -1;
+            anim.Flip(direction);
+        }
+        
         StopCoroutine(CantMove(0));
         StartCoroutine(CantMove(.1f));
 
@@ -166,6 +188,9 @@ public class PlayerMovement : MonoBehaviour{
         isWallJump = true;
     }
     private void WallSlide(){
+        if(coll.wallSide != direction)
+            anim.Flip(direction * -1);
+
         if(!canMove)
             return;
 
@@ -188,6 +213,8 @@ public class PlayerMovement : MonoBehaviour{
         StartCoroutine(AfterDash());
     }
     IEnumerator AfterDash(){
+        // todo : 개선 여지
+        FindObjectOfType<GhostTrailEffect>().ShowGhost();
         StartCoroutine(GroundDash());
 
         rigid.gravityScale = 0;
@@ -203,7 +230,7 @@ public class PlayerMovement : MonoBehaviour{
         dashing = false;
     }
     IEnumerator GroundDash(){
-        Debug.Log("땅 대쉬");
+        //Debug.Log("땅 대쉬");
         yield return new WaitForSeconds(.15f);
         if(coll.onGround)
             dashed = false;
