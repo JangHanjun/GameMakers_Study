@@ -15,6 +15,8 @@ public class EnemyDamaged : MonoBehaviour
     public void Damaged(){
         if(curHp < 1){
             Debug.Log("이걸 죽네");
+            var item = ItemDropManager.GetItem();
+            item.transform.position = transform.position;
         }
         Debug.Log("특징: 아프다");
         curHp--;

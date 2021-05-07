@@ -6,6 +6,7 @@ public class PlayerMovement : MonoBehaviour{
     Collisions coll;
     Rigidbody2D rigid;
     PlayerAnimation anim;
+    //GrabItem grabItem;
     [Header("Player Stat")]
     // 플레이어 능력치
     public float speed = 10;
@@ -32,6 +33,7 @@ public class PlayerMovement : MonoBehaviour{
         coll = GetComponent<Collisions>();
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<PlayerAnimation>();
+        //grabItem = GetComponent<GrabItem>();
     }
 
     void Update(){
@@ -134,10 +136,12 @@ public class PlayerMovement : MonoBehaviour{
         if(x > 0){
             direction = 1;
             anim.Flip(direction);
+            //grabItem.grabDir(direction);
         }
         if(x < 0){
             direction = -1;
             anim.Flip(direction);
+            //grabItem.grabDir(direction);
         }
             
     }

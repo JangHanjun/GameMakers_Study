@@ -8,6 +8,8 @@ public class PlayerAnimation : MonoBehaviour{
     Collisions coll;
     [HideInInspector]
     public SpriteRenderer spriteRenderer;
+    //public GameObject holdPoint;
+    bool state;
     void Start(){
         spriteRenderer = GetComponent<SpriteRenderer>();
         coll = GetComponent<Collisions>();
@@ -38,7 +40,14 @@ public class PlayerAnimation : MonoBehaviour{
                 return;
         }
 
-        bool state = (dir == 1) ? true : false;
+        // if(dir == 1){
+        //     state = true;
+        //     holdPoint.transform.localPosition = new Vector3(0.87f, 0.22f, 0);
+        // } else {
+        //     state = false;
+        //     holdPoint.transform.localPosition = new Vector3(-0.87f, 0.22f, 0);
+        // }
+        state = (dir == 1) ? true : false;
         spriteRenderer.flipX = state;
     }
 }

@@ -11,7 +11,8 @@ public class PickUpItem : MonoBehaviour{
                 if(inven.slots[i].isEmpty){
                     Instantiate(slotItme, inven.slots[i].slotObject.transform, false);
                     inven.slots[i].isEmpty = false;
-                    Destroy(this.gameObject);
+                    //Destroy(this.gameObject);
+                    ItemDropManager.ReturnItem(this);
                     break;
                 }
             }

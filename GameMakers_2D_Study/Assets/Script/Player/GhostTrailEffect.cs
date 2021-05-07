@@ -17,7 +17,6 @@ public class GhostTrailEffect : MonoBehaviour{
     }
 
     public void ShowGhost() {
-        Debug.Log("헤응");
         Sequence s = DOTween.Sequence();
 
 
