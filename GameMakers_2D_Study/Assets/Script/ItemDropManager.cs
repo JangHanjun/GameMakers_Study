@@ -6,7 +6,9 @@ public class ItemDropManager : MonoBehaviour{
     public static ItemDropManager Instance;
     [SerializeField]
     private GameObject itemPrefab;
-    private Queue<PickUpItem> dropItemPool = new Queue<PickUpItem>();
+    //private Queue<PickUpItem> dropItemPool = new Queue<PickUpItem>();
+    private List<PickUpItem> itemPool = new List<PickUpItem>();
+    int rand;
 
     private void Awake(){
         Instance = this;
@@ -22,12 +24,14 @@ public class ItemDropManager : MonoBehaviour{
 
     private void Init(int count){
         for(int i = 0; i < count; i++){
-            dropItemPool.Enqueue(Create());
+            itemPool.Add(Create());
         }
     }
 
     public static PickUpItem GetItem(){
-        var obj = Instance.dropItemPool.Dequeue();
+        int rand = Random.Range(0, Instance.itemPool.Count);
+        var obj = Instance.itemPool[rand];
+        Instance.itemPool.RemoveAt(rand);
         obj.transform.SetParent(null);
         obj.gameObject.SetActive(true);
         return obj;
@@ -36,7 +40,7 @@ public class ItemDropManager : MonoBehaviour{
     public static void ReturnItem(PickUpItem item){
         item.gameObject.SetActive(false);
         item.transform.SetParent(Instance.transform);
-        Instance.dropItemPool.Enqueue(item);
+        Instance.itemPool.Add(item);
     }
 }
 
