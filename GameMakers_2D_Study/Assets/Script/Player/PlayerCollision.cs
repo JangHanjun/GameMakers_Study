@@ -14,8 +14,11 @@ public class PlayerCollision : MonoBehaviour
     }
 
     private void Update() {
-        if(Input.GetKeyDown(KeyCode.R))
+        if(Input.GetKeyDown(KeyCode.R)){
             PlayerRespawn();
+            playerState.StartCoroutine(playerState.CantMove(1f));
+        }
+            
     }
 
     private void OnTriggerEnter2D(Collider2D other) {

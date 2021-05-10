@@ -217,7 +217,6 @@ public class PlayerMovement : MonoBehaviour{
         StartCoroutine(AfterDash());
     }
     IEnumerator AfterDash(){
-        // todo : 개선 여지
         FindObjectOfType<GhostTrailEffect>().ShowGhost();
         StartCoroutine(GroundDash());
 
@@ -241,7 +240,7 @@ public class PlayerMovement : MonoBehaviour{
     }
 
     // 통제권 제외 후 time시간 후에 돌려줌
-    IEnumerator CantMove(float time){
+    public IEnumerator CantMove(float time){
         canMove = false;
         yield return new WaitForSeconds(time);
         canMove = true;

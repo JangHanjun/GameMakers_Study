@@ -5,6 +5,7 @@ public class GhostTrailEffect : MonoBehaviour{
     PlayerMovement playerMovement;
     SpriteRenderer sprite;
     PlayerAnimation anim;
+    public GameObject player;
     public Transform ghostsParent;
     public Color trailColor;
     public Color fadeColor;
@@ -12,8 +13,8 @@ public class GhostTrailEffect : MonoBehaviour{
     public float fadeTime;
     void Start(){
         sprite = GetComponent<SpriteRenderer>();
-        playerMovement = FindObjectOfType<PlayerMovement>();
-        anim = FindObjectOfType<PlayerAnimation>();
+        playerMovement = player.GetComponent<PlayerMovement>();
+        anim = player.GetComponent<PlayerAnimation>();
     }
 
     public void ShowGhost() {
