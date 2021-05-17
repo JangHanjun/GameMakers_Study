@@ -12,7 +12,7 @@ public class ItemDropManager : MonoBehaviour{
 
     private void Awake(){
         Instance = this;
-        Init(5);
+        InitItemPool(5);
     }
 
     private PickUpItem Create(){
@@ -22,7 +22,7 @@ public class ItemDropManager : MonoBehaviour{
         return obj;
     }
 
-    private void Init(int count){
+    private void InitItemPool(int count){
         for(int i = 0; i < count; i++){
             itemPool.Add(Create());
         }

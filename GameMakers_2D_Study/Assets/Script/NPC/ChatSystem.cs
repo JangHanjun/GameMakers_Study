@@ -40,6 +40,6 @@ public class ChatSystem : MonoBehaviour{
             yield return new WaitForSeconds(3f);
         }
 
-        Destroy(gameObject);
+        NpcDialogueMananger.NpcTalkEnd(this);
     }
 }
