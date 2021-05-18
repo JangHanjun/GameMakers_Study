@@ -32,7 +32,7 @@ public class ChatSystem : MonoBehaviour{
 
             // 말풍선(quad) 크기 지정
             textW = text.preferredWidth;
-            textW = (textW > 3) ? 3 : 3 + 0.3f;
+            textW = (textW > 3.5f) ? 3.5f : textW + 1;
             quad.transform.localScale = new Vector2(textW, text.preferredHeight + 0.3f);
 
             transform.position = new Vector2(quadPos.position.x, quadPos.position.y + text.preferredHeight/2);
