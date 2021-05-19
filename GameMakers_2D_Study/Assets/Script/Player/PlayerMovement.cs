@@ -33,7 +33,6 @@ public class PlayerMovement : MonoBehaviour{
         coll = GetComponent<Collisions>();
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<PlayerAnimation>();
-        //grabItem = GetComponent<GrabItem>();
     }
 
     void Update(){

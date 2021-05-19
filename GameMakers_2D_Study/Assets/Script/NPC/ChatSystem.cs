@@ -15,12 +15,12 @@ public class ChatSystem : MonoBehaviour{
         sentences = new Queue<string>();
         sentences.Clear();
 
-        foreach(var line in lines){
-            sentences.Enqueue(line);
-        }
-        // for(int i = 0; i < lines.Length; i++){
-        //     sentences.Enqueue();
+        // foreach(var line in lines){
+        //     sentences.Enqueue(line);
         // }
+        for(int i = 0; i < lines.Length; i++){
+            sentences.Enqueue(lines[i]);
+        }
         StartCoroutine(Talk(pos));
     }
 
