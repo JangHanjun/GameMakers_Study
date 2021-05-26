@@ -7,6 +7,7 @@ public class NpcFsm : MonoBehaviour{
     public enum NpcState { IDLE, TRACK, WARN }
     public NpcState curState;
     private Transform player;
+    Vector3 moveToward;
     Vector3 playerOffset;
     float detectDistance = 16f;
     private PlayerMovement playerDash;
@@ -22,12 +23,16 @@ public class NpcFsm : MonoBehaviour{
         StartCoroutine(IdleMove());
     }
 
+    // TODO : Update 함수에서 플레이어 이동 함수 구현
+
     IEnumerator IdleMove(){
+        Debug.Log("Idle");
         yield return delay;
         if(playerDash.dashed){
             Debug.Log("대쉬함");
             playerOffset = player.position - this.transform.position;
             if(playerOffset.sqrMagnitude < detectDistance){
+                // 플레이어 감지
                 Debug.Log("플레이어 위치 : " + player.position);
                 npcTalk.Talk();
                 StartCoroutine(DetectPlayer(player.position));
@@ -37,16 +42,13 @@ public class NpcFsm : MonoBehaviour{
         } 
         else
             StartCoroutine(IdleMove());
-        // 근처에서 플레이어 감지를 하면
-        // curState = NpcState.TRACK;
-        // StartCoroutine(DetectPlayer());
     }
 
     IEnumerator DetectPlayer(Vector3 playerPos){
-        Debug.Log("이곳으로 이동 : " + playerPos);
-        yield return delay;
-
-        
+        moveToward.x = playerPos.x;
+        Debug.Log("이곳으로 이동 : " + );
+        yield return new WaitForSeconds(3f);
+        StartCoroutine(IdleMove());
     }
 
     IEnumerator Warning(){
