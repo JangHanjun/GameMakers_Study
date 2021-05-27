@@ -10,6 +10,7 @@ public class NpcFsm : MonoBehaviour{
     Vector3 moveToward;
     Vector3 playerOffset;
     float detectDistance = 16f;
+    bool isTalking;
     private PlayerMovement playerDash;
     private NPCTalk npcTalk;
     WaitForSeconds delay = new WaitForSeconds(0.1f);
@@ -31,8 +32,9 @@ public class NpcFsm : MonoBehaviour{
         if(playerDash.dashed){
             Debug.Log("대쉬함");
             playerOffset = player.position - this.transform.position;
-            if(playerOffset.sqrMagnitude < detectDistance){
+            if(playerOffset.sqrMagnitude < detectDistance && !isTalking){
                 // 플레이어 감지
+                isTalking = true;
                 Debug.Log("플레이어 위치 : " + player.position);
                 npcTalk.Talk();
                 StartCoroutine(DetectPlayer(player.position));
@@ -46,8 +48,9 @@ public class NpcFsm : MonoBehaviour{
 
     IEnumerator DetectPlayer(Vector3 playerPos){
         moveToward.x = playerPos.x;
-        Debug.Log("이곳으로 이동 : " + );
-        yield return new WaitForSeconds(3f);
+        Debug.Log("이곳으로 이동 : " + moveToward.x);
+        yield return new WaitForSeconds(8f);
+        isTalking = false;
         StartCoroutine(IdleMove());
     }
 
